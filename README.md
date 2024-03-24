@@ -13,11 +13,14 @@ THe Generic Project Structure is as follows:
 │       └───<benchmark_file_2.cpp>
 ├───Python - Test Case Builder
 │   └───<python_helper_files.py>
-└───Rust
-    ├───<Benchmark Parameter 1>
-    │   ├───<benchmark_file_1.rs>
-    │   └───<benchmark_file_2.rs>
-    └───<Benchmark Parameter 2>
-        ├───<benchmark_file_1.rs>
-        └───<benchmark_file_2.rs>
+├───Rust
+│   ├───<Benchmark Parameter 1>
+│   │   ├───<benchmark_file_1.rs>
+│   │   └───<benchmark_file_2.rs>
+│   └───<Benchmark Parameter 2>
+│       ├───<benchmark_file_1.rs>
+│       └───<benchmark_file_2.rs>
+└───Test Inputs
+    ├───<BenchmarkParameter_ProgramName_1.txt>
+    └───<BenchmarkParameter_ProgramName_2.txt>
 ```
