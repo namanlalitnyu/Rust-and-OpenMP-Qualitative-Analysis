@@ -1,5 +1,5 @@
 [package]
-name = "scalability"
+name = "matrix_sort"
 version = "0.1.0"
 edition = "2021"
 
