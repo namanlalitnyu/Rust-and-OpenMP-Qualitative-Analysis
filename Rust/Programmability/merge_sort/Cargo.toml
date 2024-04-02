@@ -1,0 +1,12 @@
+[[bin]]
+name = "parallel"
+path = "src/parallel.rs"
+
+[package]
+name = "parallel"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+rayon = "1.5.1"
+rand = "0.8.5"

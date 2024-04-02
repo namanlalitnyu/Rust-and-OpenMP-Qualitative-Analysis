@@ -1,0 +1,1 @@
+/Users/namanlalit/Desktop/Masters/Spring2024/Multicore/Project/Rust-vs-OpenMP-Benchmarking-Code/Rust/Programmability/matrix_multiplication/target/debug/parallel: /Users/namanlalit/Desktop/Masters/Spring2024/Multicore/Project/Rust-vs-OpenMP-Benchmarking-Code/Rust/Programmability/matrix_multiplication/src/parallel.rs
