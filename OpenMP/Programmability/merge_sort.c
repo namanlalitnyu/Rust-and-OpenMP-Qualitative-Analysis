@@ -42,13 +42,10 @@ void mergeSort(int arr[], int l, int r)
 {
 	if (l < r) {
 		int m = l + (r - l) / 2;
-        
         #pragma omp task
 		mergeSort(arr, l, m);
-        
         #pragma omp task
 		mergeSort(arr, m + 1, r);
-		
         #pragma omp taskwait
         merge(arr, l, m, r);
 	}
@@ -68,10 +65,8 @@ int main()
 	for(int i=0;i<100;i++){
         arr[i] = rand()%100;
     }
-    #pragma omp parallel
-    {
-        #pragma omp single
-        {
+    #pragma omp parallel {
+        #pragma omp single {
 	        mergeSort(arr, 0, 99);
         }
     }
