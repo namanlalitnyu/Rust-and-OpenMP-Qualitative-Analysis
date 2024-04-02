@@ -1,1 +1,0 @@
-/Users/namanlalit/Desktop/Masters/Spring2024/Multicore/Project/Rust-vs-OpenMP-Benchmarking-Code/Rust/Programmability/merge_sort/target/debug/parallel: /Users/namanlalit/Desktop/Masters/Spring2024/Multicore/Project/Rust-vs-OpenMP-Benchmarking-Code/Rust/Programmability/merge_sort/src/parallel.rs
