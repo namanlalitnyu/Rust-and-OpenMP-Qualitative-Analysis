@@ -13,8 +13,7 @@ fn merge_sort(vec: &Vec<i32>) -> Vec<i32> {
 }
 
 fn merge(left: &Vec<i32>, right: &Vec<i32>) -> Vec<i32> {
-    let mut i = 0;
-    let mut j = 0;
+    let (mut i, mut j) = (0, 0);
     let mut merged: Vec<i32> = Vec::new();
 
     while i < left.len() && j < right.len() {
@@ -26,20 +25,8 @@ fn merge(left: &Vec<i32>, right: &Vec<i32>) -> Vec<i32> {
             j = j + 1;
         }
     }
-
-    if i < left.len() {
-        while i < left.len() {
-            merged.push(left[i]);
-            i = i + 1;
-        }
-    }
-
-    if j < right.len() {
-        while j < right.len() {
-            merged.push(right[j]);
-            j = j + 1;
-        }
-    }
+    merged.extend_from_slice(&left[i..]);
+    merged.extend_from_slice(&right[j..]);
     merged
 }
 

@@ -1,17 +1,18 @@
 use rayon::prelude::*;
 use rand::prelude::*;
 
-fn merge_sort(vec: &[i32]) -> Vec<i32> {
+fn merge_sort(vec: &Vec<i32>) -> Vec<i32> {
     if vec.len() < 2 {
         vec.to_vec()
     } else {
         let mid = vec.len() / 2;
-        let (left, right) = rayon::join(|| merge_sort(&vec[..mid]), || merge_sort(&vec[mid..]));
-        merge(&left, &right)
+        let (left, right) = rayon::join(|| merge_sort(&vec[..mid].to_vec()), || merge_sort(&vec[mid..].to_vec()));
+        let result = merge(&left, &right);
+        result
     }
 }
 
-fn merge(left: &[i32], right: &[i32]) -> Vec<i32> {
+fn merge(left: &Vec<i32>, right: &Vec<i32>) -> Vec<i32> {
     let (mut i, mut j) = (0, 0);
     let mut merged: Vec<i32> = Vec::with_capacity(left.len() + right.len());
 
@@ -24,7 +25,7 @@ fn merge(left: &[i32], right: &[i32]) -> Vec<i32> {
             j += 1;
         }
     }
-
+    
     merged.extend_from_slice(&left[i..]);
     merged.extend_from_slice(&right[j..]);
     merged
