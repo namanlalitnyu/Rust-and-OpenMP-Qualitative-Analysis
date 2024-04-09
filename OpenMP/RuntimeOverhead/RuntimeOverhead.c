@@ -1,56 +1,51 @@
-#include <stdio.h>
+#include <iostream>
+#include <vector>
 #include <omp.h>
-#include <windows.h>
+#include <chrono>
 
 int main() {
-    int thread_count = 4; // Number of threads to use
-    LARGE_INTEGER frequency, start, end, sync_start, sync_end;
-    double creation_time, sync_time, termination_time;
+    std::vector<int> threads_to_test = {1, 2, 4, 8, 16};
+    int num_iterations = 1000; // Increase the number of iterations to get a measurable duration
 
-    QueryPerformanceFrequency(&frequency);
-    
-    QueryPerformanceCounter(&start); // Start time
+    for (int thread_count : threads_to_test) {
+        double total_creation_time = 0.0, total_sync_time = 0.0, total_termination_time = 0.0;
 
-    #pragma omp parallel num_threads(thread_count)
-    {
-        // Dummy work to prevent optimization out before synchronization
-        double pre_sum = 0;
-        for (int i = 0; i < 100000; ++i) {
-            pre_sum += i;
+        std::cout << "Testing with " << thread_count << " threads:\n";
+
+        for (int iter = 0; iter < num_iterations; ++iter) {
+            std::chrono::high_resolution_clock::time_point start, end, sync_start, sync_end;
+
+            start = std::chrono::high_resolution_clock::now();
+
+            #pragma omp parallel num_threads(thread_count)
+            {
+                if (omp_get_thread_num() == 0) {
+                    sync_start = std::chrono::high_resolution_clock::now();
+                }
+
+                #pragma omp barrier
+
+                if (omp_get_thread_num() == 0) {
+                    sync_end = std::chrono::high_resolution_clock::now();
+                }
+            }
+            
+            end = std::chrono::high_resolution_clock::now();
+
+            total_creation_time += std::chrono::duration_cast<std::chrono::nanoseconds>(sync_start - start).count();
+            total_sync_time += std::chrono::duration_cast<std::chrono::nanoseconds>(sync_end - sync_start).count();
+            total_termination_time += std::chrono::duration_cast<std::chrono::nanoseconds>(end - sync_end).count();
         }
 
-        int thread_num = omp_get_thread_num();
-        if (thread_num == 0) {
-            // Get the time before synchronization (only by the master thread)
-            QueryPerformanceCounter(&sync_start);
-        }
+        double avg_creation_time = (total_creation_time / num_iterations) / 1e9;
+        double avg_sync_time = (total_sync_time / num_iterations) / 1e9;
+        double avg_termination_time = (total_termination_time / num_iterations) / 1e9;
 
-        // Synchronization point: all threads wait here
-        #pragma omp barrier
-        
-        if (thread_num == 0) {
-            // Get the time after synchronization (only by the master thread)
-            QueryPerformanceCounter(&sync_end);
-        }
-
-        // Dummy work to prevent optimization out after synchronization
-        double post_sum = 0;
-        for (int i = 0; i < 100000; ++i) {
-            post_sum += i;
-        }
+        std::cout.precision(9); 
+        std::cout << "Average thread creation time: " << avg_creation_time << " seconds\n";
+        std::cout << "Average synchronization time: " << avg_sync_time << " seconds\n";
+        std::cout << "Average thread termination time: " << avg_termination_time << " seconds\n\n";
     }
-    
-    QueryPerformanceCounter(&end); // End time
-
-    // Calculate the time intervals
-    creation_time = (double)(sync_start.QuadPart - start.QuadPart) / frequency.QuadPart;
-    sync_time = (double)(sync_end.QuadPart - sync_start.QuadPart) / frequency.QuadPart;
-    termination_time = (double)(end.QuadPart - sync_end.QuadPart) / frequency.QuadPart;
-
-    // Output the timing information
-    printf("Thread creation time: %lf seconds\n", creation_time);
-    printf("Synchronization time: %lf seconds\n", sync_time);
-    printf("Thread termination time: %lf seconds\n", termination_time);
 
     return 0;
 }
