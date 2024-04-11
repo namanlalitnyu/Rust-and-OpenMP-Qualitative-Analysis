@@ -1,84 +1,88 @@
+#include <assert.h>
+#include <string.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <omp.h>
 #include <iostream>
 #include <vector>
 #include <chrono>
+#include <random>
 
-void merge(std::vector<int>& arr, int l, int m, int r) {
-    int n1 = m - l + 1;
-    int n2 = r - m;
+#define TASK_SIZE 100
 
-    std::vector<int> L(n1), R(n2);
+void mergeSortAux(int *X, int n, int *arr) {
+   int i = 0;
+   int j = n/2;
+   int ti = 0;
 
-    for (int i = 0; i < n1; i++) {
-        L[i] = arr[l + i];
-    }
-    for (int j = 0; j < n2; j++) {
-        R[j] = arr[m + 1 + j];
-    }
-
-    int i = 0, j = 0, k = l;
-
-    while (i < n1 && j < n2) {
-        if (L[i] <= R[j]) {
-            arr[k] = L[i];
-            i++;
-        } else {
-            arr[k] = R[j];
-            j++;
-        }
-        k++;
-    }
-
-    while (i < n1) {
-        arr[k] = L[i];
-        i++;
-        k++;
-    }
-
-    while (j < n2) {
-        arr[k] = R[j];
-        j++;
-        k++;
-    }
+   while (i < n/2 && j < n) {
+      if (X[i] < X[j]) {
+         arr[ti] = X[i];
+         ti++; i++;
+      } else {
+         arr[ti] = X[j];
+         ti++; j++;
+      }
+   }
+   while (i < n/2) {
+      arr[ti] = X[i];
+      ti++; i++;
+   }
+   while (j<n) {
+      arr[ti] = X[j];
+      ti++; j++;
+   }
+   memcpy(X, arr, n*sizeof(int));
 }
 
-void mergeSort(std::vector<int>& arr, int l, int r) {
-    if (l >= r) {
-        return;
-    }
+void mergeSort(int *X, int n, int *tmp)
+{
+   if (n < 2) return;
 
-    int m = l + (r - l) / 2;
-    
-    #pragma omp task
-    mergeSort(arr, l, m);
-    
-    #pragma omp task
-    mergeSort(arr, m + 1, r);
-    
-    #pragma omp taskwait
-    merge(arr, l, m, r);
+   #pragma omp task shared(X) if (n > TASK_SIZE)
+   mergeSort(X, n/2, tmp);
+
+   #pragma omp task shared(X) if (n > TASK_SIZE)
+   mergeSort(X+(n/2), n-(n/2), tmp + n/2);
+
+   #pragma omp taskwait
+   mergeSortAux(X, n, tmp);
 }
 
-int main() {
-    std::vector<int> arr = {559, 134, 805, 585, 704, 518, 164, 354, 596, 993, 861, 402, 567, 807, 570, 441, 565, 131, 886, 620, 478, 686, 374, 950, 169, 193, 881, 699, 948, 942, 279, 132, 774, 236, 329, 550, 558, 337, 500, 149, 953, 78, 177, 527, 249, 116, 20, 596, 151, 872, 619, 680, 30, 766, 952, 639, 68, 824, 709, 916, 21, 918, 758, 448, 652, 311, 921, 494, 293, 622, 482, 865, 733, 440, 849, 492, 480, 464, 886, 14, 726, 366, 476, 953, 470, 818, 537, 668, 365, 691, 179, 570, 959, 192, 353, 616, 984, 84, 973, 537, 108, 16, 354, 370, 90, 230, 517, 490, 938, 880, 458, 976, 891, 681, 660, 717, 320, 844, 183, 945, 379, 953, 79, 754, 262, 82, 184, 630, 923, 115, 833, 551, 381, 310, 288, 782, 648, 145, 377, 916, 185, 165, 514, 396, 586, 660, 257, 896, 155, 316, 476, 261, 818, 426, 925, 182, 828, 354, 912, 631, 871, 610, 219, 198, 943, 144, 858, 761, 269, 293, 58, 894, 916, 619, 507, 120, 923, 559, 685, 770, 523, 31, 183, 779, 512, 967, 68, 4, 603, 678, 957, 337, 255, 125, 63, 647, 788, 291, 237, 109, 309, 344, 545, 155, 692, 810, 360, 352, 732, 20, 501, 783, 954, 636, 996, 486, 421, 776, 654, 451, 697, 89, 811, 563, 550, 909, 855, 666, 798, 236, 961, 652, 157, 539, 10, 874, 326, 745, 861, 320, 522, 211, 567, 666, 866, 696, 441, 337, 126, 563, 113, 385, 783, 224, 645, 199, 33, 391, 89, 21, 76, 260, 721, 297, 548, 976, 575, 662, 422, 532, 926, 119, 391, 523, 779, 400, 861, 365, 225, 970, 645, 559, 786, 871, 824, 745, 410, 129, 965, 789, 711, 318, 4, 571, 590, 195, 768, 977, 639, 989, 334, 927, 348, 626, 658, 797, 548, 418, 432, 914, 534, 781, 699, 884, 146, 177, 220, 952, 514, 771, 699, 304, 257, 57, 816, 542, 914, 883, 380, 260, 2, 101, 479, 387, 109, 416, 435, 970, 264, 478, 566, 667, 171, 737, 490, 809, 30, 645, 856, 390, 184, 323, 396, 250, 710, 783, 627, 276, 258, 364, 927, 963, 622, 181, 685, 534, 136, 23, 50, 446, 27, 210, 342, 208, 915, 425, 996, 142, 877, 355, 671, 297, 776, 282, 148, 443, 30, 3, 988, 390, 725, 356, 790, 932, 841, 847, 878, 808, 353, 274, 573, 81, 151, 880, 623, 545, 724, 993, 66, 316, 805, 101, 792, 792, 508, 332, 223, 846, 615, 185, 93, 942, 790, 670, 798, 1000, 861, 234, 738, 53, 318, 584, 910, 720, 484, 375, 972, 185, 758, 273, 896, 751, 7, 827, 328, 193, 109, 234, 403, 547, 689, 810, 784, 793, 399, 124, 469, 941, 479, 165, 455, 803, 334, 337, 33, 620, 511, 237, 326, 880, 414, 781, 422, 648, 396, 836, 828, 862, 176, 42, 31, 662, 774, 915, 840, 61, 271, 941, 873, 104, 742, 212, 216, 605, 160, 705, 367, 108, 75, 497};
+void printArray(int *a, int size){
+   for(int i = 0; i < size; i++)
+       printf("%d ", a[i]);
+   printf("\n");
+}
 
-    auto start = std::chrono::high_resolution_clock::now();
-    #pragma omp parallel
-    {
-        #pragma omp single
-        {
-            mergeSort(arr, 0, arr.size() - 1);
-        }
-    }
-    auto end = std::chrono::high_resolution_clock::now();
-    std::chrono::duration<double> elapsed = end - start;
-    std::cout << "Elapsed time: " << elapsed.count() * 1000000 << " micro seconds" << std::endl;
+int main(int argc, char *argv[]) {
+   int n  = (argc > 1) ? atoi(argv[1]) : 10;
+   int numThreads = atoi(argv[2]);
+   int *X = (int *)malloc(n * sizeof(int));
+   int *tmp = (int *)malloc(n * sizeof(int));
 
-    // std::cout << "Sorted Array: ";
-    
-    // for (const auto& num : arr) {
-    //     std::cout << num << " ";
-    // }
-    // std::cout << std::endl;
+   omp_set_dynamic(0);
+   omp_set_num_threads(numThreads);
 
-    return 0;
+   std::random_device rd;
+   std::mt19937 gen(rd());
+   std::uniform_int_distribution<> dis(1, 100);
+   for(int i=0; i<n; i++){
+      X[i] = dis(gen);
+   }
+
+   double begin = omp_get_wtime();
+   #pragma omp parallel
+   {
+      #pragma omp single
+      mergeSort(X, n, tmp);
+   }
+   double end = omp_get_wtime();
+   printf("Time: %f (s) \n",end-begin);
+
+   //   printArray(X, n);
+
+   free(X);
+   free(tmp);
+   return 0;
 }
