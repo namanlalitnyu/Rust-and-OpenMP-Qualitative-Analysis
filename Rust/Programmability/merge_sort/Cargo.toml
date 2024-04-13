@@ -1,9 +1,9 @@
 [[bin]]
-name = "parallel"
-path = "src/parallel.rs"
+name = "sequential"
+path = "src/sequential.rs"
 
 [package]
-name = "parallel"
+name = "sequential"
 version = "0.1.0"
 edition = "2021"
 
