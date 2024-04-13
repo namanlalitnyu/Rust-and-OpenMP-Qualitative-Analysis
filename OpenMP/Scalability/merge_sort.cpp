@@ -8,6 +8,8 @@
 #include <chrono>
 #include <random>
 
+using namespace std;
+
 #define TASK_SIZE 100
 
 void mergeSortAux(int *X, int n, int *arr) {
@@ -71,14 +73,15 @@ int main(int argc, char *argv[]) {
       X[i] = dis(gen);
    }
 
-   double begin = omp_get_wtime();
+   auto start = std::chrono::high_resolution_clock::now();
    #pragma omp parallel
    {
       #pragma omp single
       mergeSort(X, n, tmp);
    }
-   double end = omp_get_wtime();
-   printf("Time: %f (s) \n",end-begin);
+   auto end = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double> elapsed = end - start;
+    std::cout << "Elapsed time: " << elapsed.count() * 1000000 << " micro seconds" << std::endl;
 
    //   printArray(X, n);
 
