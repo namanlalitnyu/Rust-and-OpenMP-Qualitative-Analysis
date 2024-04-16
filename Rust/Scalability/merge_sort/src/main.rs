@@ -63,7 +63,7 @@ fn main() {
 
     let mut rng = rand::thread_rng();
     let mut arr: Vec<i32> = (0..n).map(|_| rng.gen_range(0..1000)).collect();
-
+    
     rayon::ThreadPoolBuilder::new()
         .num_threads(num_threads_usize)
         .build_global()
