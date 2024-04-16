@@ -25,7 +25,7 @@ The Generic Project Structure is as follows:
     └───<BenchmarkParameter_ProgramName_2.txt>
 ```
 
-Steps to run the code on Crunchy1:
+## Steps to run the code on Crunchy1:
 ```
 1. SSH into cims using: ssh <netID>@access.cims.nyu.edu
 2. SSH into crunchy1 using: ssh crunchy1
