@@ -41,4 +41,8 @@ The Generic Project Structure is as follows:
 12. To compile the Rust Code for merge_sort, go into Rust\Scalability\merge_sort.
 13. Build release version using: cargo build --release
 14. Run this release version using: cargo run --release <array_size> <num_threads>
+15. To compile RuntimeOverhead.cpp, go into OpenMP\RuntimeOverhead, then use: g++ -fopenmp -o RuntimeOverhead RuntimeOverhead.cpp
+16. To run RuntimeOverhead.cpp, use: ./RuntimeOverhead
+17. To compile the Rust code for runtime overhead, go into Rust\RuntimeOverhead, then use: cargo build --release
+18. To run this release version using: cargo run --release
 ```
