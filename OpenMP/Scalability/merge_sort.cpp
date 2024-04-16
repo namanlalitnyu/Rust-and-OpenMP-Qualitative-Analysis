@@ -12,7 +12,7 @@ using namespace std;
 
 #define TASK_SIZE 100
 
-void mergeSortAux(int *X, int n, int *arr) {
+void merge(int *X, int n, int *arr) {
    int i = 0;
    int j = n/2;
    int ti = 0;
@@ -48,13 +48,7 @@ void mergeSort(int *X, int n, int *tmp)
    mergeSort(X+(n/2), n-(n/2), tmp + n/2);
 
    #pragma omp taskwait
-   mergeSortAux(X, n, tmp);
-}
-
-void printArray(int *a, int size){
-   for(int i = 0; i < size; i++)
-       printf("%d ", a[i]);
-   printf("\n");
+   merge(X, n, tmp);
 }
 
 int main(int argc, char *argv[]) {
@@ -80,10 +74,8 @@ int main(int argc, char *argv[]) {
       mergeSort(X, n, tmp);
    }
    auto end = std::chrono::high_resolution_clock::now();
-    std::chrono::duration<double> elapsed = end - start;
-    std::cout << "Elapsed time: " << elapsed.count() * 1000000 << " micro seconds" << std::endl;
-
-   //   printArray(X, n);
+   std::chrono::duration<double> elapsed = end - start;
+   std::cout << "Elapsed time: " << elapsed.count() * 1000000 << " micro seconds" << std::endl;
 
    free(X);
    free(tmp);
