@@ -46,3 +46,14 @@ The Generic Project Structure is as follows:
 17. To compile the Rust code for runtime overhead, go into Rust\RuntimeOverhead, then use: cargo build --release
 18. To run this release version using: cargo run --release
 ```
+
+### Steps for referencing and running Programmability:
+```
+1. For this Project, we are comparing two languages: OpenMP and Rust.
+2. For Programmability, all the code is present under the "Programmability" directory for both OpenMP and Rust:
+   a. The "OpenMP/Programmability/" directory contains both the sequential and parallel codes for 
+      Matrix Multiplication and Merge Sort are written in C++ and OpenMP respectively.
+   b. The "Rust/Programmability/" directory contains both the sequential and parallel codes for
+      Matrix Multiplication and Merge Sort are written in Rust and Rayon respectively.
+   c. To run the files, we need to follow the same steps which are mentioned above.
+```
